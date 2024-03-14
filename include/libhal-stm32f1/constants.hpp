@@ -265,10 +265,4 @@ enum class irq : std::uint16_t
   otg_fs = 67,
   max,
 };
-
-/// Error types for stm32f1
-enum class error_t : std::uint16_t
-{
-  max,
-};
 }  // namespace hal::stm32f1

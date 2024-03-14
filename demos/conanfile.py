@@ -15,33 +15,14 @@
 # limitations under the License.
 
 from conan import ConanFile
-from conan.tools.cmake import CMake, cmake_layout
-from conan.errors import ConanInvalidConfiguration
 
 
 class demos(ConanFile):
-    settings = "compiler", "build_type", "os", "arch"
-    generators = "CMakeToolchain", "CMakeDeps", "VirtualBuildEnv"
-    options = {"platform": ["ANY"]}
-    default_options = {"platform": "unspecified"}
-
-    def layout(self):
-        platform_directory = "build/" + str(self.options.platform)
-        cmake_layout(self, build_folder=platform_directory)
-
-    def validate(self):
-        if self.settings.os != "baremetal":
-            raise ConanInvalidConfiguration(
-                f"Only baremetal OS is allowed here!")
-
-    def build_requirements(self):
-        self.tool_requires("cmake/3.27.1")
-        self.tool_requires("libhal-cmake-util/3.0.1")
+    settings = "compiler", "build_type", "os", "arch", "libc"
+    python_requires = "libhal-bootstrap/[^1.0.0]"
+    python_requires_extend = "libhal-bootstrap.demo"
 
     def requirements(self):
-        self.requires("libhal-stm32f1/2.0.5")
-
-    def build(self):
-        cmake = CMake(self)
-        cmake.configure()
-        cmake.build()
+        bootstrap = self.python_requires["libhal-bootstrap"]
+        bootstrap.module.add_demo_requirements(self, is_platform=True)
+        self.requires("libhal-stm32f1/[>=3.0.0]")

@@ -18,19 +18,18 @@
 #include <libhal-stm32f1/output_pin.hpp>
 #include <libhal-util/steady_clock.hpp>
 
-hal::status application()
+void application()
 {
   auto cpu_frequency = hal::stm32f1::frequency(hal::stm32f1::peripheral::cpu);
   hal::cortex_m::dwt_counter steady_clock(cpu_frequency);
-
-  auto led = HAL_CHECK(hal::stm32f1::output_pin::get('C', 13));
+  hal::stm32f1::output_pin led('C', 13);
 
   while (true) {
     using namespace std::chrono_literals;
 
-    HAL_CHECK(led.level(false));
+    led.level(false);
     hal::delay(steady_clock, 200ms);
-    HAL_CHECK(led.level(true));
+    led.level(true);
     hal::delay(steady_clock, 200ms);
   }
 }

@@ -15,35 +15,47 @@
 # limitations under the License.
 
 from conan import ConanFile
-from conan.tools.cmake import CMake, cmake_layout
-from conan.tools.files import copy
-from conan.tools.build import check_min_cppstd
 import os
 
 
-required_conan_version = ">=2.0.6"
+required_conan_version = ">=2.0.14"
 
 
 class libhal_stm32f1_conan(ConanFile):
     name = "libhal-stm32f1"
-    version = "2.0.5"
     license = "Apache-2.0"
-    url = "https://github.com/conan-io/conan-center-index"
     homepage = "https://libhal.github.io/libhal-stm32f1"
     description = ("A collection of drivers and libraries for the stm32f1 "
                    "series microcontrollers from NXP")
     topics = ("arm", "microcontroller", "lpc", "stm32f1",
               "stm32f1xx", "stm32f172", "stm32f174", "stm32f178", "stm32f188")
     settings = "compiler", "build_type", "os", "arch"
-    exports_sources = "include/*", "linker_scripts/*", "tests/*", "LICENSE", "CMakeLists.txt", "src/*"
-    generators = "CMakeToolchain", "CMakeDeps", "VirtualBuildEnv"
+
+    python_requires = "libhal-bootstrap/[^1.0.0]"
+    python_requires_extend = "libhal-bootstrap.library"
 
     options = {
-        "platform": ["ANY"]
+        "platform": ["ANY"],
     }
     default_options = {
-        "platform": "ANY"
+        "platform": "ANY",
     }
+
+    def requirements(self):
+        self.requires("libhal-armcortex/[^3.0.2]", transitive_headers=True)
+
+    def add_linker_scripts_to_link_flags(self):
+        linker_script_name = list(str(self.options.platform))
+        # Replace the MCU number and pin count number with 'x' (don't care)
+        # to map to the linker script
+        linker_script_name[8] = 'x'
+        linker_script_name[9] = 'x'
+        linker_script_name = "".join(linker_script_name)
+
+        self.cpp_info.exelinkflags = [
+            "-L" + os.path.join(self.package_folder, "linker_scripts"),
+            "-T" + os.path.join("libhal-stm32f1", linker_script_name + ".ld"),
+        ]
 
     @property
     def _is_me(self):
@@ -52,81 +64,17 @@ class libhal_stm32f1_conan(ConanFile):
             len(str(self.options.platform)) == 11
         )
 
-    @property
-    def _min_cppstd(self):
-        return "20"
+    def package_info(self):
+        self.cpp_info.libs = ["libhal-stm32f1"]
+        self.cpp_info.set_property("cmake_target_name", "libhal::stm32f1")
 
-    @property
-    def _compilers_minimum_version(self):
-        return {
-            "gcc": "11",
-            "clang": "14",
-            "apple-clang": "14.0.0"
-        }
-
-    @property
-    def _bare_metal(self):
-        return self.settings.os == "baremetal"
+        if self.settings.os == "baremetal" and self._is_me:
+            self.add_linker_scripts_to_link_flags()
+            self.buildenv_info.define("LIBHAL_PLATFORM",
+                                      str(self.options.platform))
+            self.buildenv_info.define("LIBHAL_PLATFORM_LIBRARY",
+                                      "stm32f1")
 
     def package_id(self):
         if self.info.options.get_safe("platform"):
             del self.info.options.platform
-
-    def validate(self):
-        if self.settings.get_safe("compiler.cppstd"):
-            check_min_cppstd(self, self._min_cppstd)
-
-    def build_requirements(self):
-        self.tool_requires("cmake/3.27.1")
-        self.tool_requires("libhal-cmake-util/3.0.1")
-        self.test_requires("boost-ext-ut/1.1.9")
-
-    def requirements(self):
-        self.requires("libhal/[^2.0.3]", transitive_headers=True)
-        self.requires("libhal-util/[^3.0.1]")
-        self.requires("libhal-armcortex/[^2.2.1]")
-
-    def layout(self):
-        cmake_layout(self)
-
-    def build(self):
-        cmake = CMake(self)
-        cmake.configure()
-        cmake.build()
-
-    def package(self):
-        copy(self,
-             "LICENSE",
-             dst=os.path.join(self.package_folder, "licenses"),
-             src=self.source_folder)
-        copy(self,
-             "*.h",
-             dst=os.path.join(self.package_folder, "include"),
-             src=os.path.join(self.source_folder, "include"))
-        copy(self,
-             "*.hpp",
-             dst=os.path.join(self.package_folder, "include"),
-             src=os.path.join(self.source_folder, "include"))
-        copy(self,
-             "*.ld",
-             dst=os.path.join(self.package_folder, "linker_scripts"),
-             src=os.path.join(self.source_folder, "linker_scripts"))
-
-        cmake = CMake(self)
-        cmake.install()
-
-    def package_info(self):
-        self.cpp_info.set_property("cmake_target_name", "libhal::stm32f1")
-        self.cpp_info.libs = ["libhal-stm32f1"]
-
-        if self._bare_metal and self._is_me:
-            linker_script_name = list(str(self.options.platform))
-            # Replace the MCU number and pin count number with 'x' (don't care)
-            # to map to the linker script
-            linker_script_name[8] = 'x'
-            linker_script_name[9] = 'x'
-            linker_script_name = "".join(linker_script_name)
-
-            linker_path = os.path.join(self.package_folder, "linker_scripts")
-            link_script = "-Tlibhal-stm32f1/" + linker_script_name + ".ld"
-            self.cpp_info.exelinkflags = ["-L" + linker_path, link_script]
