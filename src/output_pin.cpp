@@ -23,14 +23,12 @@
 #include "power.hpp"
 
 namespace hal::stm32f1 {
-output_pin::output_pin(std::uint8_t p_port,
-                       std::uint8_t p_pin,
+output_pin::output_pin(std::uint8_t p_port,  // NOLINT
+                       std::uint8_t p_pin,   // NOLINT
                        output_pin::settings p_settings)
   : m_port(p_port)
   , m_pin(p_pin)
 {
-  output_pin gpio(p_port, p_pin);
-
   // Ensure that AFIO is powered on before attempting to access it
   power_on(peripheral::afio);
 
