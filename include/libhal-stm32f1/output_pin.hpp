@@ -32,21 +32,16 @@ public:
    * @param p_port - selects pin port to use
    * @param p_pin - selects which pin within the port to use
    * @param p_settings - initial pin settings
-   * @return result<output_pin> - reference to the statically allocated output
-   * pin
+   * @throws hal::argument_out_of_domain - if the port and pin are not valid
    */
-  static result<output_pin> get(std::uint8_t p_port,  // NOLINT
-                                std::uint8_t p_pin,   // NOLINT
-                                output_pin::settings p_settings = {});
+  output_pin(std::uint8_t p_port,
+             std::uint8_t p_pin,
+             output_pin::settings p_settings = {});
 
 private:
-  output_pin(std::uint8_t p_port,  // NOLINT
-             std::uint8_t p_pin    // NOLINT
-  );
-
-  status driver_configure(const settings& p_settings) override;
-  result<set_level_t> driver_level(bool p_high) override;
-  result<level_t> driver_level() override;
+  void driver_configure(const settings& p_settings) override;
+  void driver_level(bool p_high) override;
+  bool driver_level() override;
 
   std::uint8_t m_port{};
   std::uint8_t m_pin{};

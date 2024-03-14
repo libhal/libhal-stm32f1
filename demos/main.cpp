@@ -12,29 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <libhal-armcortex/system_control.hpp>
+#include <libhal-armcortex/dwt_counter.hpp>
+#include <libhal-exceptions/control.hpp>
+#include <libhal-stm32f1/clock.hpp>
+#include <libhal-stm32f1/constants.hpp>
+#include <libhal-stm32f1/output_pin.hpp>
+#include <libhal-util/steady_clock.hpp>
 #include <libhal/error.hpp>
 
 // Application function must be implemented by one of the compilation units
 // (.cpp) files.
-extern hal::status application();
+extern void application();
+
+[[noreturn]] void terminate_handler() noexcept
+{
+  hal::cortex_m::dwt_counter steady_clock(
+    hal::stm32f1::frequency(hal::stm32f1::peripheral::cpu));
+
+  hal::stm32f1::output_pin led('C', 13);
+
+  while (true) {
+    using namespace std::chrono_literals;
+    led.level(false);
+    hal::delay(steady_clock, 100ms);
+    led.level(true);
+    hal::delay(steady_clock, 100ms);
+    led.level(false);
+    hal::delay(steady_clock, 100ms);
+    led.level(true);
+    hal::delay(steady_clock, 1000ms);
+  }
+}
 
 int main()
 {
-  auto is_finished = application();
-
-  if (!is_finished) {
-    hal::cortex_m::reset();
-  } else {
-    hal::halt();
-  }
-
+  hal::set_terminate(terminate_handler);
+  application();
   return 0;
 }
-
-namespace boost {
-void throw_exception(std::exception const&)
-{
-  hal::halt();
-}
-}  // namespace boost

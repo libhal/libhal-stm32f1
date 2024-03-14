@@ -25,22 +25,21 @@ using namespace std::literals;
 
 volatile int poll_counter = 0;
 
-hal::status application()
+void application()
 {
   hal::cortex_m::interrupt::initialize<hal::value(hal::stm32f1::irq::max)>();
 
-  auto led = HAL_CHECK(hal::stm32f1::output_pin::get('C', 13));
+  hal::stm32f1::output_pin led('C', 13);
 
   static hal::cortex_m::systick_timer timer(
     hal::stm32f1::frequency(hal::stm32f1::peripheral::cpu));
 
-  HAL_CHECK(timer.schedule(
+  timer.schedule(
     [&led]() {
-      bool level = led.level().value().state;
       // Invert the pin level with each call of this function.
-      (void)led.level(!level);
+      led.level(!led.level());
     },
-    500ms));
+    500ms);
 
   while (true) {
     // Use a debugger to inspect this value to confirm its updates. This
@@ -48,6 +47,4 @@ hal::status application()
     // executed.
     poll_counter = poll_counter + 1;
   }
-
-  return hal::success();
 }

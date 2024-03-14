@@ -17,59 +17,51 @@
 #include <cstdint>
 
 #include <libhal-util/bit.hpp>
+#include <libhal/error.hpp>
 
 #include "pin.hpp"
 #include "power.hpp"
 
 namespace hal::stm32f1 {
-result<output_pin> output_pin::get(std::uint8_t p_port,
-                                   std::uint8_t p_pin,
-                                   output_pin::settings p_settings)
+output_pin::output_pin(std::uint8_t p_port,
+                       std::uint8_t p_pin,
+                       output_pin::settings p_settings)
+  : m_port(p_port)
+  , m_pin(p_pin)
 {
   output_pin gpio(p_port, p_pin);
 
   // Ensure that AFIO is powered on before attempting to access it
-  power(peripheral::afio).on();
+  power_on(peripheral::afio);
 
   if (p_port == 'A') {
-    power(peripheral::gpio_a).on();
+    power_on(peripheral::gpio_a);
   } else if (p_port == 'B') {
-    power(peripheral::gpio_b).on();
+    power_on(peripheral::gpio_b);
   } else if (p_port == 'C') {
-    power(peripheral::gpio_c).on();
+    power_on(peripheral::gpio_c);
   } else if (p_port == 'D') {
-    power(peripheral::gpio_d).on();
+    power_on(peripheral::gpio_d);
   } else if (p_port == 'E') {
-    power(peripheral::gpio_e).on();
+    power_on(peripheral::gpio_e);
   } else {
-    return hal::new_error(std::errc::invalid_argument);
+    hal::safe_throw(hal::argument_out_of_domain(this));
   }
 
   // Ignore result as this function is infallible
-  (void)gpio.driver_configure(p_settings);
-  return gpio;
+  output_pin::driver_configure(p_settings);
 }
 
-output_pin::output_pin(std::uint8_t p_port,  // NOLINT
-                       std::uint8_t p_pin    // NOLINT
-                       )
-  : m_port(p_port)
-  , m_pin(p_pin)
-{
-}
-
-status output_pin::driver_configure(const settings& p_settings)
+void output_pin::driver_configure(const settings& p_settings)
 {
   if (!p_settings.open_drain) {
     configure_pin({ .port = m_port, .pin = m_pin }, push_pull_gpio_output);
   } else if (p_settings.open_drain) {
     configure_pin({ .port = m_port, .pin = m_pin }, open_drain_gpio_output);
   }
-
-  return hal::success();
 }
 
-result<output_pin::set_level_t> output_pin::driver_level(bool p_high)
+void output_pin::driver_level(bool p_high)
 {
   if (p_high) {
     // The first 16 bits of the register set the output state
@@ -78,14 +70,12 @@ result<output_pin::set_level_t> output_pin::driver_level(bool p_high)
     // The last 16 bits of the register reset the output state
     gpio(m_port).bsrr = 1 << (16 + m_pin);
   }
-
-  return set_level_t{};
 }
 
-result<output_pin::level_t> output_pin::driver_level()
+bool output_pin::driver_level()
 {
   auto pin_value = bit_extract(bit_mask::from(m_pin), gpio(m_port).idr);
 
-  return level_t{ .state = static_cast<bool>(pin_value) };
+  return static_cast<bool>(pin_value);
 }
 }  // namespace hal::stm32f1

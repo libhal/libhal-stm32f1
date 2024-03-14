@@ -37,34 +37,45 @@ volatile uint32_t* enable(std::uint32_t p_bus_index)
 }
 }  // namespace
 
-power::power(peripheral p_peripheral)
+void power_on(peripheral p_peripheral)
 {
   auto peripheral_value = hal::value(p_peripheral);
   auto bus_number = peripheral_value / bus_id_offset;
 
-  m_bit_position = static_cast<std::uint8_t>(peripheral_value % bus_id_offset);
-  m_enable_register = enable(bus_number);
-}
+  auto bit_position =
+    static_cast<std::uint8_t>(peripheral_value % bus_id_offset);
+  auto enable_register = enable(bus_number);
 
-void power::on()
-{
-  if (m_enable_register) {
-    hal::bit_modify(*m_enable_register).set(bit_mask::from(m_bit_position));
+  if (enable_register) {
+    hal::bit_modify(*enable_register).set(bit_mask::from(bit_position));
   }
 }
 
-bool power::is_on()
+void power_off(peripheral p_peripheral)
 {
-  if (m_enable_register) {
-    return hal::bit_extract(bit_mask::from(m_bit_position), *m_enable_register);
+  auto peripheral_value = hal::value(p_peripheral);
+  auto bus_number = peripheral_value / bus_id_offset;
+
+  auto bit_position =
+    static_cast<std::uint8_t>(peripheral_value % bus_id_offset);
+  auto enable_register = enable(bus_number);
+  if (enable_register) {
+    hal::bit_modify(*enable_register).clear(bit_mask::from(bit_position));
+  }
+}
+
+bool is_on(peripheral p_peripheral)
+{
+  auto peripheral_value = hal::value(p_peripheral);
+  auto bus_number = peripheral_value / bus_id_offset;
+
+  auto bit_position =
+    static_cast<std::uint8_t>(peripheral_value % bus_id_offset);
+  auto enable_register = enable(bus_number);
+
+  if (enable_register) {
+    return hal::bit_extract(bit_mask::from(bit_position), *enable_register);
   }
   return true;
-}
-
-void power::off()
-{
-  if (m_enable_register) {
-    hal::bit_modify(*m_enable_register).clear(bit_mask::from(m_bit_position));
-  }
 }
 }  // namespace hal::stm32f1

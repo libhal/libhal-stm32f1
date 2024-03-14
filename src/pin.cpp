@@ -89,7 +89,7 @@ void configure_pin(pin_select_t p_pin_select, pin_config_t p_config)
 void release_jtag_pins()
 {
   // Ensure that AFIO is powered on before attempting to access it
-  power(peripheral::afio).on();
+  power_on(peripheral::afio);
   // Set the JTAG Release code
   bit_modify(alternative_function_io->mapr)
     .insert<bit_mask::from<24, 26>()>(0b010U);

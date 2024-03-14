@@ -19,43 +19,23 @@
 #include <libhal-stm32f1/constants.hpp>
 
 namespace hal::stm32f1 {
-
 /**
- * @brief Power control for stm32f1xx peripherals
+ * @brief Power on the peripheral
  *
  */
-class power
-{
-public:
-  /**
-   * @brief Construct a new power control object
-   *
-   * @param p_peripheral - id of the peripheral to configure
-   */
-  power(peripheral p_peripheral);
+void power_on(peripheral p_peripheral);
 
-  /**
-   * @brief Power on the peripheral
-   *
-   */
-  void on();
+/**
+ * @brief Power off peripheral
+ *
+ */
+void power_off(peripheral p_peripheral);
 
-  /**
-   * @brief Check if the peripheral is powered on
-   *
-   * @return true - peripheral is on
-   * @return false - peripheral is off
-   */
-  [[nodiscard]] bool is_on();
-
-  /**
-   * @brief Power off peripheral
-   *
-   */
-  void off();
-
-private:
-  volatile std::uint32_t* m_enable_register = nullptr;
-  std::uint8_t m_bit_position = 0;
-};
+/**
+ * @brief Check if the peripheral is powered on
+ *
+ * @return true - peripheral is on
+ * @return false - peripheral is off
+ */
+[[nodiscard]] bool is_on(peripheral p_peripheral);
 }  // namespace hal::stm32f1

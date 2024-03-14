@@ -14,22 +14,13 @@
 
 #include <libhal-stm32f1/output_pin.hpp>
 
+volatile bool run = false;
+
 int main()
 {
-  auto output_pin = hal::stm32f1::output_pin::get(2, 0).value();
-  hal::result<hal::output_pin::level_t> pin_level = output_pin.level();
-  if (pin_level) {
-    printf("Pin Level = %d\n", pin_level.value().state);
-  } else {
-    printf("Reading pin level failed!\n");
+  if (run) {
+    hal::stm32f1::output_pin output_pin(2, 0);
+    [[maybe_unused]] bool pin_level = output_pin.level();
   }
-
   return 0;
 }
-
-namespace boost {
-void throw_exception(std::exception const& e)
-{
-  hal::halt();
-}
-}  // namespace boost
