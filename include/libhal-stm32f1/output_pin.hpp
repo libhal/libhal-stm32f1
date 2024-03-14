@@ -34,8 +34,8 @@ public:
    * @param p_settings - initial pin settings
    * @throws hal::argument_out_of_domain - if the port and pin are not valid
    */
-  output_pin(std::uint8_t p_port,
-             std::uint8_t p_pin,
+  output_pin(std::uint8_t p_port,  // NOLINT
+             std::uint8_t p_pin,   // NOLINT
              output_pin::settings p_settings = {});
 
 private:
