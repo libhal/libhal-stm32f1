@@ -14,7 +14,6 @@
 
 #include <libhal-stm32f1/pin.hpp>
 
-#include <array>
 #include <cstdint>
 
 #include <libhal-util/bit.hpp>
@@ -74,6 +73,29 @@ void configure_pin(pin_select_t p_pin_select, pin_config_t p_config)
   constexpr auto cnf1 = bit_mask::from<3>();
   constexpr auto cnf0 = bit_mask::from<2>();
   constexpr auto mode = bit_mask::from<0, 1>();
+
+  // Ensure that AFIO is powered on before attempting to access it
+  power_on(peripheral::afio);
+
+  switch (p_pin_select.port) {
+    case 'A':
+      power_on(peripheral::gpio_a);
+      break;
+    case 'B':
+      power_on(peripheral::gpio_b);
+      break;
+    case 'C':
+      power_on(peripheral::gpio_c);
+      break;
+    case 'D':
+      power_on(peripheral::gpio_d);
+      break;
+    case 'E':
+      power_on(peripheral::gpio_e);
+      break;
+    default:
+      hal::safe_throw(hal::argument_out_of_domain(nullptr));
+  }
 
   auto config = bit_value<std::uint32_t>(0)
                   .insert<cnf1>(p_config.CNF1)

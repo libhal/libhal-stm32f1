@@ -42,7 +42,9 @@ class libhal_stm32f1_conan(ConanFile):
     }
 
     def requirements(self):
+        self.requires("libhal/[^3.3.0]", transitive_headers=True)
         self.requires("libhal-armcortex/[^3.0.2]", transitive_headers=True)
+        self.requires("libhal-util/[^4.1.0]")
 
     def add_linker_scripts_to_link_flags(self):
         linker_script_name = list(str(self.options.platform))

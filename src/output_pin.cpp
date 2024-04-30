@@ -20,7 +20,6 @@
 #include <libhal/error.hpp>
 
 #include "pin.hpp"
-#include "power.hpp"
 
 namespace hal::stm32f1 {
 output_pin::output_pin(std::uint8_t p_port,  // NOLINT
@@ -29,23 +28,6 @@ output_pin::output_pin(std::uint8_t p_port,  // NOLINT
   : m_port(p_port)
   , m_pin(p_pin)
 {
-  // Ensure that AFIO is powered on before attempting to access it
-  power_on(peripheral::afio);
-
-  if (p_port == 'A') {
-    power_on(peripheral::gpio_a);
-  } else if (p_port == 'B') {
-    power_on(peripheral::gpio_b);
-  } else if (p_port == 'C') {
-    power_on(peripheral::gpio_c);
-  } else if (p_port == 'D') {
-    power_on(peripheral::gpio_d);
-  } else if (p_port == 'E') {
-    power_on(peripheral::gpio_e);
-  } else {
-    hal::safe_throw(hal::argument_out_of_domain(this));
-  }
-
   // Ignore result as this function is infallible
   output_pin::driver_configure(p_settings);
 }

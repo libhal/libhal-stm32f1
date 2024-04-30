@@ -25,9 +25,11 @@ libhal_test_and_make_library(
   src/output_pin.cpp
   src/pin.cpp
   src/power.cpp
+  src/uart.cpp
 
   TEST_SOURCES
   tests/output_pin.test.cpp
+  tests/uart.test.cpp
   tests/main.test.cpp
 
   PACKAGES
