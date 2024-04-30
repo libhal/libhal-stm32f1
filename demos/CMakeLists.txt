@@ -21,6 +21,7 @@ libhal_build_demos(
   blinker
   button
   systick_timer
+  uart
 
   PACKAGES
   libhal-stm32f1
