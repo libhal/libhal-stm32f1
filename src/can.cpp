@@ -4,6 +4,7 @@
 #include <libhal-stm32f1/can.hpp>
 #include <libhal-stm32f1/constants.hpp>
 #include <libhal-util/bit.hpp>
+#include <libhal-util/bit_limits.hpp>
 #include <libhal-util/can.hpp>
 #include <libhal-util/enum.hpp>
 #include <libhal-util/static_callable.hpp>
@@ -15,7 +16,6 @@
 #include "libhal-stm32f1/pin.hpp"
 #include "pin.hpp"
 #include "power.hpp"
-#include "rcc_reg.hpp"
 
 namespace hal::stm32f1 {
 namespace {
@@ -57,18 +57,34 @@ void exit_initialization()
 
 void configure_baud_rate(stm32f1::can* p_can, const can::settings& p_settings)
 {
-  auto can_frequency = frequency(peripheral::can1);
-  auto optional_prescale = is_valid(p_settings, can_frequency);
+  const auto can_frequency = frequency(peripheral::can1);
+  const auto valid_divider =
+    calculate_can_bus_divider(can_frequency, p_settings.baud_rate);
 
-  if (!optional_prescale) {
+  if (not valid_divider) {
     hal::safe_throw(hal::operation_not_supported(p_can));
   }
 
-  const auto prescale = optional_prescale.value() - 1U;
-  const auto phase_segment1 =
-    p_settings.phase_segment1 + p_settings.propagation_delay - 1U;
-  const auto phase_segment2 = p_settings.phase_segment2 - 1U;
-  const auto sync_jump_width = p_settings.synchronization_jump_width - 1U;
+  const auto divisors = valid_divider.value();
+
+  const auto prescale = divisors.clock_divider - 1U;
+  const auto sync_jump_width = divisors.synchronization_jump_width - 1U;
+
+  auto phase_segment1 =
+    (divisors.phase_segment1 + divisors.propagation_delay) - 1U;
+  auto phase_segment2 = divisors.phase_segment2 - 1U;
+
+  constexpr auto segment2_bit_limit =
+    hal::bit_limits<bus_timing::time_segment2.width, std::uint32_t>::max();
+
+  // Check if phase segment 2 does not fit
+  if (phase_segment2 > segment2_bit_limit) {
+    // Take the extra time quanta and add it to the phase 1 segment
+    const auto phase_segment2_remainder = phase_segment2 - segment2_bit_limit;
+    phase_segment1 += phase_segment2_remainder;
+    // Cap phase segment 2 to the max available in the bit field
+    phase_segment2 = segment2_bit_limit;
+  }
 
   bit_modify(can1_reg->BTR)
     .insert<bus_timing::prescalar>(prescale)
