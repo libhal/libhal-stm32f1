@@ -1,6 +1,7 @@
 #pragma once
 
 #include <libhal-util/bit.hpp>
+
 namespace hal::stm32f1 {
 
 /// Namespace for the status registers (SR) bit masks

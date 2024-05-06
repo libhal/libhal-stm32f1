@@ -108,7 +108,7 @@ enum class rtc_source : std::uint8_t
 /// Available clock sources for the PLL
 enum class pll_source : std::uint8_t
 {
-  high_speed_internal = 0b0,
+  internal_8mhz_divided_by_2 = 0b0,
   high_speed_external = 0b1,
   high_speed_external_divided_by_2 = 0b11,
 };
@@ -133,7 +133,7 @@ struct clock_tree
   struct pll_t
   {
     bool enable = false;
-    pll_source source = pll_source::high_speed_internal;
+    pll_source source = pll_source::internal_8mhz_divided_by_2;
     pll_multiply multiply = pll_multiply::multiply_by_2;
     struct usb_divider_t
     {
@@ -153,7 +153,7 @@ struct clock_tree
   struct rtc_t
   {
     bool enable = false;
-    rtc_source source = rtc_source::low_speed_internal;
+    rtc_source source = rtc_source::no_clock;
   } rtc = {};
 
   /// Defines the configuration of the dividers beyond system clock mux.
@@ -166,12 +166,13 @@ struct clock_tree
       apb_divider divider = apb_divider::divide_by_1;
     } apb1 = {};
 
+    /// Maximum rate of 72 MHz
     struct apb2_t
     {
       apb_divider divider = apb_divider::divide_by_1;
+      /// Maximum of 14 MHz
       struct adc_t
       {
-        /// Maximum of 14 MHz
         adc_divider divider = adc_divider::divide_by_2;
       } adc = {};
     } apb2 = {};
@@ -193,4 +194,12 @@ void configure_clocks(clock_tree p_clock_tree);
 
 /// @return the clock rate frequency of a peripheral
 hal::hertz frequency(peripheral p_id);
+
+/**
+ * @brief Sets every bus to its maximum possible frequency using the internal
+ * oscillator
+ *
+ * NOTE: USB cannot be used in this configuration.
+ */
+void maximum_speed_using_internal_oscillator();
 }  // namespace hal::stm32f1

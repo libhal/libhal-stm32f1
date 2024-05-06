@@ -22,6 +22,7 @@ libhal_build_demos(
   button
   systick_timer
   uart
+  can
 
   PACKAGES
   libhal-stm32f1

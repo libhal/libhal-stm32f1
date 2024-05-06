@@ -26,7 +26,7 @@ namespace hal::stm32f1 {
  * pull down
  *
  */
-class input_pin : public hal::input_pin
+class input_pin final : public hal::input_pin
 {
 public:
   /**

@@ -19,6 +19,8 @@
 
 #include <libhal/error.hpp>
 
+#include <libhal-stm32f1/pin.hpp>
+
 namespace hal::stm32f1 {
 
 struct alternative_function_io_t
@@ -138,6 +140,13 @@ static constexpr pin_config_t input_pull_up = {
 void configure_pin(pin_select_t p_pin_select, pin_config_t p_config);
 
 /**
+ * @brief Remap can pins
+ *
+ * @param p_pin_select - pair of pins to select
+ */
+void remap_pins(can_pins p_pin_select);
+
+/**
  * @brief Returns the gpio register based on the port
  *
  * @param p_port - port letter, must be from 'A' to 'G'
@@ -145,13 +154,13 @@ void configure_pin(pin_select_t p_pin_select, pin_config_t p_config);
  */
 gpio_t& gpio(std::uint8_t p_port);
 
-inline alternative_function_io_t* alternative_function_io =
+inline auto* alternative_function_io =
   reinterpret_cast<alternative_function_io_t*>(0x4001'0000);
-inline gpio_t* gpio_a_reg = reinterpret_cast<gpio_t*>(0x4001'0800);
-inline gpio_t* gpio_b_reg = reinterpret_cast<gpio_t*>(0x4001'0c00);
-inline gpio_t* gpio_c_reg = reinterpret_cast<gpio_t*>(0x4001'1000);
-inline gpio_t* gpio_d_reg = reinterpret_cast<gpio_t*>(0x4001'1400);
-inline gpio_t* gpio_e_reg = reinterpret_cast<gpio_t*>(0x4001'1800);
-inline gpio_t* gpio_f_reg = reinterpret_cast<gpio_t*>(0x4001'1c00);
-inline gpio_t* gpio_g_reg = reinterpret_cast<gpio_t*>(0x4001'2000);
+inline auto* gpio_a_reg = reinterpret_cast<gpio_t*>(0x4001'0800);
+inline auto* gpio_b_reg = reinterpret_cast<gpio_t*>(0x4001'0c00);
+inline auto* gpio_c_reg = reinterpret_cast<gpio_t*>(0x4001'1000);
+inline auto* gpio_d_reg = reinterpret_cast<gpio_t*>(0x4001'1400);
+inline auto* gpio_e_reg = reinterpret_cast<gpio_t*>(0x4001'1800);
+inline auto* gpio_f_reg = reinterpret_cast<gpio_t*>(0x4001'1c00);
+inline auto* gpio_g_reg = reinterpret_cast<gpio_t*>(0x4001'2000);
 }  // namespace hal::stm32f1

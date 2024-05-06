@@ -14,8 +14,6 @@
 
 #include <libhal-stm32f1/clock.hpp>
 
-#include <array>
-
 #include <libhal-stm32f1/constants.hpp>
 #include <libhal-util/bit.hpp>
 #include <libhal-util/enum.hpp>
@@ -26,15 +24,15 @@
 namespace hal::stm32f1 {
 
 namespace {
-hal::hertz rtc_clock_rate = 0.0_Hz;
-hal::hertz usb_clock_rate = 0.0_Hz;
-hal::hertz pll_clock_rate = 0.0_Hz;
+hal::hertz rtc_clock_rate = 0.0_Hz;  // defaults to "no clock"
+hal::hertz usb_clock_rate = 0.0_Hz;  // pll is required thus undefined
+hal::hertz pll_clock_rate = 0.0_Hz;  // undefined until pll is enabled
 hal::hertz ahb_clock_rate = internal_high_speed_oscillator;
-hal::hertz apb1_clock_rate = 0.0_Hz;
-hal::hertz apb2_clock_rate = 0.0_Hz;
-hal::hertz timer_apb1_clock_rate = 0.0_Hz;
-hal::hertz timer_apb2_clock_rate = 0.0_Hz;
-hal::hertz adc_clock_rate = 0.0_Hz;
+hal::hertz apb1_clock_rate = internal_high_speed_oscillator;
+hal::hertz apb2_clock_rate = internal_high_speed_oscillator;
+hal::hertz timer_apb1_clock_rate = internal_high_speed_oscillator;
+hal::hertz timer_apb2_clock_rate = internal_high_speed_oscillator;
+hal::hertz adc_clock_rate = internal_high_speed_oscillator / 2;
 }  // namespace
 
 /// @attention If configuration of the system clocks is desired, one should
@@ -79,7 +77,7 @@ void configure_clocks(clock_tree p_clock_tree)
   // Step 3. Enable External Oscillators
   // =========================================================================
   // Step 3.1 Enable High speed external Oscillator
-  if (p_clock_tree.high_speed_external != 0.0_MHz) {
+  if (p_clock_tree.high_speed_external > 1.0_MHz) {
     clock_control::reg().set(clock_control::external_osc_enable);
 
     while (!bit_extract<clock_control::external_osc_ready>(
@@ -89,7 +87,7 @@ void configure_clocks(clock_tree p_clock_tree)
   }
 
   // Step 3.2 Enable Low speed external Oscillator
-  if (p_clock_tree.low_speed_external != 0.0_MHz) {
+  if (p_clock_tree.low_speed_external > 1.0_MHz) {
     rtc_register::reg().set(rtc_register::low_speed_osc_enable);
 
     while (!bit_extract<rtc_register::low_speed_osc_ready>(
@@ -113,14 +111,14 @@ void configure_clocks(clock_tree p_clock_tree)
     clock_configuration::reg().insert<clock_configuration::pll_mul>(
       value(p_clock_tree.pll.multiply));
 
-    clock_control::reg().set(clock_control::pll_enable);
+    clock_control::reg().set<clock_control::pll_enable>();
 
     while (!bit_extract<clock_control::pll_ready>(clock_control::reg().get())) {
       continue;
     }
 
     switch (p_clock_tree.pll.source) {
-      case pll_source::high_speed_internal:
+      case pll_source::internal_8mhz_divided_by_2:
         pll_clock_rate = internal_high_speed_oscillator / 2;
         break;
       case pll_source::high_speed_external:
@@ -411,5 +409,35 @@ hal::hertz frequency(peripheral p_id)
   }
 
   return 0.0_Hz;
+}
+
+void maximum_speed_using_internal_oscillator()
+{
+  using namespace hal::literals;
+
+  configure_clocks(clock_tree{
+    .high_speed_external = 0.0f,
+    .pll = {
+      .enable = true,
+      .source = pll_source::internal_8mhz_divided_by_2,
+      .multiply = pll_multiply::multiply_by_16,
+      .usb = { // NOTE: Cannot be used when using the internal oscillator
+        .divider = usb_divider::divide_by_1_point_5,
+      }
+    },
+    .system_clock = system_clock_select::pll,
+    .ahb = {
+      .divider = ahb_divider::divide_by_1,
+      .apb1 = {
+        .divider = apb_divider::divide_by_2,
+      },
+      .apb2 = {
+        .divider = apb_divider::divide_by_1,
+        .adc = {
+          .divider = adc_divider::divide_by_6,
+        }
+      },
+    },
+  });
 }
 }  // namespace hal::stm32f1

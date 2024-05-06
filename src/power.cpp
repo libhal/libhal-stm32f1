@@ -22,7 +22,7 @@
 
 namespace hal::stm32f1 {
 namespace {
-volatile uint32_t* enable(std::uint32_t p_bus_index)
+volatile uint32_t* get_enable_register(std::uint32_t p_bus_index)
 {
   switch (p_bus_index) {
     case 0:
@@ -44,7 +44,7 @@ void power_on(peripheral p_peripheral)
 
   auto bit_position =
     static_cast<std::uint8_t>(peripheral_value % bus_id_offset);
-  auto enable_register = enable(bus_number);
+  auto enable_register = get_enable_register(bus_number);
 
   if (enable_register) {
     hal::bit_modify(*enable_register).set(bit_mask::from(bit_position));
@@ -58,7 +58,7 @@ void power_off(peripheral p_peripheral)
 
   auto bit_position =
     static_cast<std::uint8_t>(peripheral_value % bus_id_offset);
-  auto enable_register = enable(bus_number);
+  auto enable_register = get_enable_register(bus_number);
   if (enable_register) {
     hal::bit_modify(*enable_register).clear(bit_mask::from(bit_position));
   }
@@ -71,7 +71,7 @@ bool is_on(peripheral p_peripheral)
 
   auto bit_position =
     static_cast<std::uint8_t>(peripheral_value % bus_id_offset);
-  auto enable_register = enable(bus_number);
+  auto enable_register = get_enable_register(bus_number);
 
   if (enable_register) {
     return hal::bit_extract(bit_mask::from(bit_position), *enable_register);

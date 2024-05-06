@@ -92,177 +92,177 @@ enum class peripheral : std::uint8_t
 enum class irq : std::uint16_t
 {
   /// Window WatchDog
-  window_watchdog = 0,
+  window_watchdog = 16 + 0,
   /// PVD through EXTI Line detection
-  pvd = 1,
+  pvd = 16 + 1,
   /// Tamper
-  tamper = 2,
+  tamper = 16 + 2,
   /// RTC
-  rtc = 3,
+  rtc = 16 + 3,
   /// FLASH
-  flash = 4,
+  flash = 16 + 4,
   /// RCC
-  rcc = 5,
+  rcc = 16 + 5,
   /// EXTI Line0
-  exti0 = 6,
+  exti0 = 16 + 6,
   /// EXTI Line1
-  exti1 = 7,
+  exti1 = 16 + 7,
   /// EXTI Line2
-  exti2 = 8,
+  exti2 = 16 + 8,
   /// EXTI Line3
-  exti3 = 9,
+  exti3 = 16 + 9,
   /// EXTI Line4
-  exti4 = 10,
+  exti4 = 16 + 10,
   /// DMA1 Channel 1
-  dma1_channel1 = 11,
+  dma1_channel1 = 16 + 11,
   /// DMA1 Channel 2
-  dma1_channel2 = 12,
+  dma1_channel2 = 16 + 12,
   /// DMA1 Channel 3
-  dma1_channel3 = 13,
+  dma1_channel3 = 16 + 13,
   /// DMA1 Channel 4
-  dma1_channel4 = 14,
+  dma1_channel4 = 16 + 14,
   /// DMA1 Channel 5
-  dma1_channel5 = 15,
+  dma1_channel5 = 16 + 15,
   /// DMA1 Channel 6
-  dma1_channel6 = 16,
+  dma1_channel6 = 16 + 16,
   /// DMA1 Channel 7
-  dma1_channel7 = 17,
+  dma1_channel7 = 16 + 17,
   /// ADC1
-  adc1 = 18,
+  adc1 = 16 + 18,
   /// ADC1 and ADC2
-  adc1_2 = 18,
+  adc1_2 = 16 + 18,
   /// USB Device High Priority or CAN1 TX
-  usb_hp_can1_tx = 19,
+  usb_hp_can1_tx = 16 + 19,
   /// USB Device High Priority or CAN1 TX
-  can1_tx = 19,
+  can1_tx = 16 + 19,
   /// USB Device Low Priority or CAN1 RX0
-  usb_lp_can1_rx0 = 20,
+  usb_lp_can1_rx0 = 16 + 20,
   /// USB Device Low Priority or CAN1 RX0
-  can1_rx0 = 20,
+  can1_rx0 = 16 + 20,
   /// CAN1 RX1
-  can1_rx1 = 21,
+  can1_rx1 = 16 + 21,
   /// CAN1 SCE
-  can1_sce = 22,
+  can1_sce = 16 + 22,
   /// External Line[9:5]
-  exti9_5 = 23,
+  exti9_5 = 16 + 23,
   /// TIM1 Break
-  tim1_brk = 24,
+  tim1_brk = 16 + 24,
   /// TIM1 Break and TIM15
-  tim1_brk_tim15 = 24,
+  tim1_brk_tim15 = 16 + 24,
   /// TIM1 Break and TIM9
-  tim1_brk_tim9 = 24,
+  tim1_brk_tim9 = 16 + 24,
   /// TIM1 Update
-  tim1_up = 25,
+  tim1_up = 16 + 25,
   /// TIM1 Update and TIM16
-  tim1_up_tim16 = 25,
+  tim1_up_tim16 = 16 + 25,
   /// TIM1 Update and TIM10
-  tim1_up_tim10 = 25,
+  tim1_up_tim10 = 16 + 25,
   /// TIM1 Trigger and Commutation
-  tim1_trg_com = 26,
+  tim1_trg_com = 16 + 26,
   /// TIM1 Trigger and Commutation
-  tim1_trg_com_tim11 = 26,
+  tim1_trg_com_tim11 = 16 + 26,
   /// TIM1 Capture Compare
-  tim1_cc = 27,
+  tim1_cc = 16 + 27,
   /// TIM2
-  tim2 = 28,
+  tim2 = 16 + 28,
   /// TIM3
-  tim3 = 29,
+  tim3 = 16 + 29,
   /// TIM4
-  tim4 = 30,
+  tim4 = 16 + 30,
   /// I2C1 Event
-  i2c1_ev = 31,
+  i2c1_ev = 16 + 31,
   /// I2C1 Error
-  i2c1_er = 32,
+  i2c1_er = 16 + 32,
   /// I2C2 Event
-  i2c2_ev = 33,
+  i2c2_ev = 16 + 33,
   /// I2C2 Error
-  i2c2_er = 34,
+  i2c2_er = 16 + 34,
   /// SPI1
-  spi1 = 35,
+  spi1 = 16 + 35,
   /// SPI2
-  spi2 = 36,
+  spi2 = 16 + 36,
   /// USART1
-  usart1 = 37,
+  usart1 = 16 + 37,
   /// USART2
-  usart2 = 38,
+  usart2 = 16 + 38,
   /// USART3
-  usart3 = 39,
+  usart3 = 16 + 39,
   /// External Line[15:10]
-  exti15_10 = 40,
+  exti15_10 = 16 + 40,
   /// RTC Alarm through EXTI Line
-  rtcalarm = 41,
+  rtcalarm = 16 + 41,
   /// USB Device WakeUp
-  usbwakeup = 42,
+  usbwakeup = 16 + 42,
   /// HDMI-CEC
-  cec = 42,
+  cec = 16 + 42,
   /// USB OTG FS WakeUp
-  otg_fs_wkup = 42,
+  otg_fs_wkup = 16 + 42,
   /// TIM8 Break
-  tim8_brk = 43,
+  tim8_brk = 16 + 43,
   /// TIM12
-  tim12 = 43,
+  tim12 = 16 + 43,
   /// TIM8 Break and TIM12
-  tim8_brk_tim12 = 43,
+  tim8_brk_tim12 = 16 + 43,
   /// TIM8 Update
-  tim8_up = 44,
+  tim8_up = 16 + 44,
   /// TIM13
-  tim13 = 44,
+  tim13 = 16 + 44,
   /// TIM8 Update and TIM13
-  tim8_up_tim13 = 44,
+  tim8_up_tim13 = 16 + 44,
   /// TIM8 Trigger and Commutation
-  tim8_trg_com = 45,
+  tim8_trg_com = 16 + 45,
   /// TIM14
-  tim14 = 45,
+  tim14 = 16 + 45,
   /// TIM8 Trigger and Commutation
-  tim8_trg_com_tim14 = 45,
+  tim8_trg_com_tim14 = 16 + 45,
   /// TIM8 Capture Compare
-  tim8_cc = 46,
+  tim8_cc = 16 + 46,
   /// ADC3
-  adc3 = 47,
+  adc3 = 16 + 47,
   /// FSMC
-  fsmc = 48,
+  fsmc = 16 + 48,
   /// SDIO
-  sdio = 49,
+  sdio = 16 + 49,
   /// TIM5
-  tim5 = 50,
+  tim5 = 16 + 50,
   /// SPI3
-  spi3 = 51,
+  spi3 = 16 + 51,
   /// UART4
-  uart4 = 52,
+  uart4 = 16 + 52,
   /// UART5
-  uart5 = 53,
+  uart5 = 16 + 53,
   /// TIM6 and DAC underrun
-  tim6_dac = 54,
+  tim6_dac = 16 + 54,
   /// TIM6
-  tim6 = 54,
+  tim6 = 16 + 54,
   /// TIM7
-  tim7 = 55,
+  tim7 = 16 + 55,
   /// DMA2 Channel 1
-  dma2_channel1 = 56,
+  dma2_channel1 = 16 + 56,
   /// DMA2 Channel 2
-  dma2_channel2 = 57,
+  dma2_channel2 = 16 + 57,
   /// DMA2 Channel 3
-  dma2_channel3 = 58,
+  dma2_channel3 = 16 + 58,
   /// DMA2 Channel 4 and Channel 5
-  dma2_channel4_5 = 59,
+  dma2_channel4_5 = 16 + 59,
   /// DMA2 Channel 4
-  dma2_channel4 = 59,
+  dma2_channel4 = 16 + 59,
   /// DMA2 Channel 5
-  dma2_channel5 = 60,
+  dma2_channel5 = 16 + 60,
   /// Ethernet
-  eth = 61,
+  eth = 16 + 61,
   /// Ethernet Wakeup through EXTI line
-  eth_wkup = 62,
+  eth_wkup = 16 + 62,
   /// CAN2 TX
-  can2_tx = 63,
+  can2_tx = 16 + 63,
   /// CAN2 RX0
-  can2_rx0 = 64,
+  can2_rx0 = 16 + 64,
   /// CAN2 RX1
-  can2_rx1 = 65,
+  can2_rx1 = 16 + 65,
   /// CAN2 SCE
-  can2_sce = 66,
+  can2_sce = 16 + 66,
   /// USB OTG FS
-  otg_fs = 67,
+  otg_fs = 16 + 67,
   max,
 };
 }  // namespace hal::stm32f1

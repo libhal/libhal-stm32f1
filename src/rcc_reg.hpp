@@ -16,6 +16,8 @@
 
 #include <cstdint>
 
+#include <libhal-util/bit.hpp>
+
 namespace hal::stm32f1 {
 struct reset_and_clock_control_t
 {

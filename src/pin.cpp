@@ -17,9 +17,11 @@
 #include <cstdint>
 
 #include <libhal-util/bit.hpp>
+#include <libhal-util/enum.hpp>
 
 #include "pin.hpp"
 #include "power.hpp"
+#include "rcc_reg.hpp"
 
 namespace hal::stm32f1 {
 namespace {
@@ -116,4 +118,18 @@ void release_jtag_pins()
   bit_modify(alternative_function_io->mapr)
     .insert<bit_mask::from<24, 26>()>(0b010U);
 }
+
+void activate_mco_pa8(mco_source p_source)
+{
+  configure_pin({ .port = 'A', .pin = 8 }, push_pull_alternative_output);
+  bit_modify(rcc->cfgr).insert<clock_configuration::mco>(value(p_source));
+}
+
+void remap_pins(can_pins p_pin_select)
+{
+  constexpr auto can_pin_remap = bit_mask::from<14, 13>();
+  bit_modify(alternative_function_io->mapr)
+    .insert<can_pin_remap>(value(p_pin_select));
+}
+
 }  // namespace hal::stm32f1

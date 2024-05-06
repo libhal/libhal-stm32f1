@@ -24,5 +24,5 @@ struct flash_t
 };
 
 /// Pointer to the flash control register
-flash_t* flash = reinterpret_cast<flash_t*>(0x4002'2000);
+inline flash_t* flash = reinterpret_cast<flash_t*>(0x4002'2000);
 }  // namespace hal::stm32f1
