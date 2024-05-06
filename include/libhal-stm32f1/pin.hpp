@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace hal::stm32f1 {
 /**
  * @brief Make JTAG pins not associated with SWD available as IO
@@ -24,4 +26,35 @@ namespace hal::stm32f1 {
  *
  */
 void release_jtag_pins();
+
+/**
+ * @brief Main (Master) Clock Output options
+ *
+ * The following options are available to be sent to the output of the MCO pin
+ */
+enum class mco_source : std::uint8_t
+{
+  system_clock = 0b100,
+  high_speed_internal = 0b101,
+  high_speed_external = 0b110,
+  pll_clock_divided_by_2 = 0b111,
+};
+
+/**
+ * @brief Output a clock on the PA8 pin
+ *
+ * @param p_source - source clock to channel to the PA8 pin
+ */
+void activate_mco_pa8(mco_source p_source);
+
+/**
+ * @brief Remap pins for can bus peripheral
+ *
+ */
+enum class can_pins : std::uint8_t
+{
+  pa11_pa12 = 0b00,
+  pb9_pb8 = 0b10,
+  pd0_pd1 = 0b11,
+};
 }  // namespace hal::stm32f1

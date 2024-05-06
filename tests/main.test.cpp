@@ -14,9 +14,11 @@
 
 namespace hal::stm32f1 {
 extern void output_pin_test();
+extern void can_test();
 }  // namespace hal::stm32f1
 
 int main()
 {
   hal::stm32f1::output_pin_test();
+  hal::stm32f1::can_test();
 }

@@ -23,7 +23,7 @@ namespace hal::stm32f1 {
  * @brief Output pin implementation for the stm32::f10x
  *
  */
-class output_pin : public hal::output_pin
+class output_pin final : public hal::output_pin
 {
 public:
   /**
