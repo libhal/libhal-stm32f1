@@ -49,13 +49,11 @@ void application()
   using namespace hal::literals;
   using namespace std::chrono_literals;
 
-  hal::stm32f1::maximum_speed_using_internal_oscillator();
-
   hal::cortex_m::dwt_counter steady_clock(
     hal::stm32f1::frequency(hal::stm32f1::peripheral::cpu));
 
   hal::stm32f1::uart uart1(hal::port<1>, hal::buffer<128>);
-  hal::stm32f1::can can(hal::can::settings{ .baud_rate = 100'000 },
+  hal::stm32f1::can can({ .baud_rate = 100'000 },
                         hal::stm32f1::can_pins::pb9_pb8);
 
 #if 1  // set to 1 to enable self test, 0 to disable
@@ -81,8 +79,8 @@ void application()
     try {
       can.send(message);
     } catch (const hal::operation_not_permitted& p_error) {
-      // hal::operation_not_permitted indicates that the device is in "bus-off"
-      // mode. Use `bus_on()` to turn the bus back on.
+      // hal::operation_not_permitted indicates that the device is in
+      // "bus-off" mode. Use `bus_on()` to turn the bus back on.
       can.bus_on();
     } catch (const hal::resource_unavailable_try_again& p_error) {
       hal::print(uart1, "CAN outgoing mailbox is full, trying again...\n");

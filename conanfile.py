@@ -31,7 +31,7 @@ class libhal_stm32f1_conan(ConanFile):
               "stm32f1xx", "stm32f172", "stm32f174", "stm32f178", "stm32f188")
     settings = "compiler", "build_type", "os", "arch"
 
-    python_requires = "libhal-bootstrap/[^1.0.3]"
+    python_requires = "libhal-bootstrap/[^2.0.0]"
     python_requires_extend = "libhal-bootstrap.library"
 
     options = {
@@ -42,9 +42,10 @@ class libhal_stm32f1_conan(ConanFile):
     }
 
     def requirements(self):
-        self.requires("libhal/[^3.3.0]", transitive_headers=True)
-        self.requires("libhal-armcortex/[^3.0.2]", transitive_headers=True)
-        self.requires("libhal-util/[^4.1.0]")
+        bootstrap = self.python_requires["libhal-bootstrap"]
+        bootstrap.module.add_library_requirements(
+            self, override_libhal_util_version="5.0.1")
+        self.requires("libhal-armcortex/[^4.0.0]", transitive_headers=True)
 
     def add_linker_scripts_to_link_flags(self):
         linker_script_name = list(str(self.options.platform))
