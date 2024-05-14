@@ -23,7 +23,6 @@
 void application()
 {
   auto cpu_frequency = hal::stm32f1::frequency(hal::stm32f1::peripheral::cpu);
-  hal::stm32f1::configure_clocks({});
   hal::cortex_m::dwt_counter steady_clock(cpu_frequency);
   hal::stm32f1::uart uart1(hal::port<1>, hal::buffer<128>);
 
