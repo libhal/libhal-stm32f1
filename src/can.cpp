@@ -3,6 +3,7 @@
 #include <libhal-armcortex/interrupt.hpp>
 #include <libhal-stm32f1/can.hpp>
 #include <libhal-stm32f1/constants.hpp>
+#include <libhal-stm32f1/interrupt.hpp>
 #include <libhal-util/bit.hpp>
 #include <libhal-util/bit_limits.hpp>
 #include <libhal-util/can.hpp>
@@ -350,7 +351,7 @@ void can::enable_self_test(bool p_enable)
 
 can::~can()
 {
-  hal::cortex_m::interrupt(hal::value(irq::can1_rx0)).enable([]() {});
+  hal::cortex_m::disable_interrupt(irq::can1_rx0);
   power_off(peripheral::can1);
 }
 
@@ -422,13 +423,13 @@ void handler_interrupt()
 
 void can::driver_on_receive(hal::callback<handler> p_handler)
 {
-  cortex_m::interrupt::initialize<value(irq::max)>();
+  initialize_interrupts();
   can_receive_handler = p_handler;
 
   // Enable interrupt service routine.
-  cortex_m::interrupt(hal::value(irq::can1_rx0)).enable(handler_interrupt);
-  cortex_m::interrupt(hal::value(irq::can1_rx1)).enable(handler_interrupt);
-  cortex_m::interrupt(hal::value(irq::can1_sce)).enable(handler_interrupt);
+  cortex_m::enable_interrupt(irq::can1_rx0, handler_interrupt);
+  cortex_m::enable_interrupt(irq::can1_rx1, handler_interrupt);
+  cortex_m::enable_interrupt(irq::can1_sce, handler_interrupt);
 
   bit_modify(can1_reg->IER)
     .set<interrupt_enable_register::fifo0_message_pending>();

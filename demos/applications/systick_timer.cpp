@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <libhal-armcortex/interrupt.hpp>
 #include <libhal-armcortex/systick_timer.hpp>
 #include <libhal-stm32f1/clock.hpp>
 #include <libhal-stm32f1/constants.hpp>
+#include <libhal-stm32f1/interrupt.hpp>
 #include <libhal-stm32f1/output_pin.hpp>
 #include <libhal-util/enum.hpp>
 #include <libhal-util/steady_clock.hpp>
@@ -27,10 +27,9 @@ volatile int poll_counter = 0;
 
 void application()
 {
-  hal::cortex_m::interrupt::initialize<hal::value(hal::stm32f1::irq::max)>();
-
   hal::stm32f1::output_pin led('C', 13);
 
+  hal::stm32f1::initialize_interrupts();
   static hal::cortex_m::systick_timer timer(
     hal::stm32f1::frequency(hal::stm32f1::peripheral::cpu));
 
