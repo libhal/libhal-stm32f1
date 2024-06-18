@@ -1,7 +1,7 @@
 #include <cmath>
 
-#include "libhal-stm32f1/constants.hpp"
 #include <libhal-stm32f1/clock.hpp>
+#include <libhal-stm32f1/constants.hpp>
 #include <libhal-stm32f1/uart.hpp>
 #include <libhal-util/bit.hpp>
 #include <libhal/error.hpp>

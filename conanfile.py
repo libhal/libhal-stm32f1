@@ -45,7 +45,7 @@ class libhal_stm32f1_conan(ConanFile):
         bootstrap = self.python_requires["libhal-bootstrap"]
         bootstrap.module.add_library_requirements(
             self, override_libhal_util_version="5.0.1")
-        self.requires("libhal-armcortex/[^4.0.0]", transitive_headers=True)
+        self.requires("libhal-armcortex/[^5.0.0]", transitive_headers=True)
 
     def add_linker_scripts_to_link_flags(self):
         linker_script_name = list(str(self.options.platform))

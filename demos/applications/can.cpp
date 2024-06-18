@@ -56,7 +56,7 @@ void application()
   hal::stm32f1::can can({ .baud_rate = 100'000 },
                         hal::stm32f1::can_pins::pb9_pb8);
 
-#if 1  // set to 1 to enable self test, 0 to disable
+#if 0  // set to 1 to enable self test, 0 to disable
   can.enable_self_test(true);
 #endif
 
