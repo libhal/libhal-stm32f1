@@ -57,13 +57,13 @@ struct baud_rate_reg  // NOLINT
 
 struct usart_t
 {
-  volatile std::uint32_t status;
-  volatile std::uint32_t data;
-  volatile std::uint32_t baud_rate;
-  volatile std::uint32_t control1;
-  volatile std::uint32_t control2;
-  volatile std::uint32_t control3;
-  volatile std::uint32_t guard_time_and_prescale;
+  std::uint32_t volatile status;
+  std::uint32_t volatile data;
+  std::uint32_t volatile baud_rate;
+  std::uint32_t volatile control1;
+  std::uint32_t volatile control2;
+  std::uint32_t volatile control3;
+  std::uint32_t volatile guard_time_and_prescale;
 };
 
 inline auto* usart1 = reinterpret_cast<usart_t*>(0x4001'3800);

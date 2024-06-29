@@ -56,20 +56,20 @@ void exit_initialization()
   }
 }
 
-void configure_baud_rate(stm32f1::can* p_can, const can::settings& p_settings)
+void configure_baud_rate(stm32f1::can* p_can, can::settings const& p_settings)
 {
-  const auto can_frequency = frequency(peripheral::can1);
-  const auto valid_divider =
+  auto const can_frequency = frequency(peripheral::can1);
+  auto const valid_divider =
     calculate_can_bus_divider(can_frequency, p_settings.baud_rate);
 
   if (not valid_divider) {
     hal::safe_throw(hal::operation_not_supported(p_can));
   }
 
-  const auto divisors = valid_divider.value();
+  auto const divisors = valid_divider.value();
 
-  const auto prescale = divisors.clock_divider - 1U;
-  const auto sync_jump_width = divisors.synchronization_jump_width - 1U;
+  auto const prescale = divisors.clock_divider - 1U;
+  auto const sync_jump_width = divisors.synchronization_jump_width - 1U;
 
   auto phase_segment1 =
     (divisors.phase_segment1 + divisors.propagation_delay) - 1U;
@@ -81,7 +81,7 @@ void configure_baud_rate(stm32f1::can* p_can, const can::settings& p_settings)
   // Check if phase segment 2 does not fit
   if (phase_segment2 > segment2_bit_limit) {
     // Take the extra time quanta and add it to the phase 1 segment
-    const auto phase_segment2_remainder = phase_segment2 - segment2_bit_limit;
+    auto const phase_segment2_remainder = phase_segment2 - segment2_bit_limit;
     phase_segment1 += phase_segment2_remainder;
     // Cap phase segment 2 to the max available in the bit field
     phase_segment2 = segment2_bit_limit;
@@ -184,7 +184,7 @@ struct can_data_registers_t
 
 /// Converts desired message to the CANx registers
 can_data_registers_t convert_message_to_stm_can(
-  const hal::can::message_t& message)
+  hal::can::message_t const& message)
 {
   can_data_registers_t registers;
 
@@ -304,7 +304,7 @@ bool is_bus_off()
 
 }  // namespace
 
-can::can(const can::settings& p_settings, can_pins p_pins)
+can::can(can::settings const& p_settings, can_pins p_pins)
 {
   power_on(peripheral::can1);
 
@@ -355,7 +355,7 @@ can::~can()
   power_off(peripheral::can1);
 }
 
-void can::driver_configure(const can::settings& p_settings)
+void can::driver_configure(can::settings const& p_settings)
 {
   enter_initialization();
 
@@ -375,7 +375,7 @@ void can::driver_bus_on()
   exit_initialization();
 }
 
-void can::driver_send(const can::message_t& p_message)
+void can::driver_send(can::message_t const& p_message)
 {
   if (is_bus_off()) {
     hal::safe_throw(hal::operation_not_permitted(this));
@@ -417,7 +417,7 @@ hal::callback<can::handler> can_receive_handler{};
 
 void handler_interrupt()
 {
-  const auto message = read_receive_mailbox();
+  auto const message = read_receive_mailbox();
   can_receive_handler(message);
 }
 

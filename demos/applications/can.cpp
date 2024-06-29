@@ -25,7 +25,7 @@
 #include <libhal/error.hpp>
 #include <libhal/initializers.hpp>
 
-void print_message(hal::serial& p_serial, const hal::can::message_t& p_message)
+void print_message(hal::serial& p_serial, hal::can::message_t const& p_message)
 {
   hal::print<64>(p_serial, "{ ");
   hal::print<64>(p_serial, "id = %lu, ", p_message.id);
@@ -60,7 +60,7 @@ void application()
   can.enable_self_test(true);
 #endif
 
-  can.on_receive([&uart1](const hal::can::message_t& p_message) {
+  can.on_receive([&uart1](hal::can::message_t const& p_message) {
     hal::print(uart1, "Received: ");
     print_message(uart1, p_message);
   });
@@ -78,11 +78,11 @@ void application()
 
     try {
       can.send(message);
-    } catch (const hal::operation_not_permitted& p_error) {
+    } catch (hal::operation_not_permitted const& p_error) {
       // hal::operation_not_permitted indicates that the device is in
       // "bus-off" mode. Use `bus_on()` to turn the bus back on.
       can.bus_on();
-    } catch (const hal::resource_unavailable_try_again& p_error) {
+    } catch (hal::resource_unavailable_try_again const& p_error) {
       hal::print(uart1, "CAN outgoing mailbox is full, trying again...\n");
     }
 

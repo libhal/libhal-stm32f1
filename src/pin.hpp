@@ -25,11 +25,11 @@ namespace hal::stm32f1 {
 
 struct alternative_function_io_t
 {
-  volatile std::uint32_t evcr;
-  volatile std::uint32_t mapr;
-  volatile std::array<std::uint32_t, 4> exticr;
+  std::uint32_t volatile evcr;
+  std::uint32_t volatile mapr;
+  std::array<std::uint32_t, 4> volatile exticr;
   std::uint32_t reserved0;
-  volatile std::uint32_t mapr2;
+  std::uint32_t volatile mapr2;
 };
 
 /**
@@ -38,13 +38,13 @@ struct alternative_function_io_t
  */
 struct gpio_t
 {
-  volatile std::uint32_t crl;
-  volatile std::uint32_t crh;
-  volatile std::uint32_t idr;
-  volatile std::uint32_t odr;
-  volatile std::uint32_t bsrr;
-  volatile std::uint32_t brr;
-  volatile std::uint32_t lckr;
+  std::uint32_t volatile crl;
+  std::uint32_t volatile crh;
+  std::uint32_t volatile idr;
+  std::uint32_t volatile odr;
+  std::uint32_t volatile bsrr;
+  std::uint32_t volatile brr;
+  std::uint32_t volatile lckr;
 };
 
 /**

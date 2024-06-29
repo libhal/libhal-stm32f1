@@ -32,9 +32,9 @@ static constexpr auto uart_dma_settings1 =
 
 void configure_baud_rate(usart_t& p_usart,
                          peripheral p_peripheral,
-                         const serial::settings& p_settings)
+                         serial::settings const& p_settings)
 {
-  const auto clock_frequency = frequency(p_peripheral);
+  auto const clock_frequency = frequency(p_peripheral);
   float usart_divider = clock_frequency / (16.0f * p_settings.baud_rate);
 
   // Truncate off the decimal values
@@ -56,7 +56,7 @@ void configure_baud_rate(usart_t& p_usart,
                         .to<std::uint16_t>();
 }
 
-void configure_format(usart_t& p_usart, const serial::settings& p_settings)
+void configure_format(usart_t& p_usart, serial::settings const& p_settings)
 {
   constexpr auto parity_selection = bit_mask::from<9>();
   constexpr auto parity_control = bit_mask::from<10>();
@@ -89,14 +89,14 @@ inline usart_t* to_usart(void* p_uart)
 uart::uart(hal::runtime,
            std::uint8_t p_port,
            std::span<hal::byte> p_buffer,
-           const serial::settings& p_settings)
+           serial::settings const& p_settings)
   : uart(p_port, p_buffer, p_settings)
 {
 }
 
 uart::uart(std::uint8_t p_port,
            std::span<hal::byte> p_buffer,
-           const serial::settings& p_settings)
+           serial::settings const& p_settings)
   : m_uart(nullptr)
   , m_receive_buffer(p_buffer)
   , m_read_index(0)
@@ -149,10 +149,10 @@ uart::uart(std::uint8_t p_port,
   auto& uart_reg = *to_usart(m_uart);
 
   // Setup RX DMA channel
-  const auto data_address = reinterpret_cast<intptr_t>(&uart_reg.data);
-  const auto queue_address = reinterpret_cast<intptr_t>(p_buffer.data());
-  const auto data_address_int = static_cast<std::uint32_t>(data_address);
-  const auto queue_address_int = static_cast<std::uint32_t>(queue_address);
+  auto const data_address = reinterpret_cast<intptr_t>(&uart_reg.data);
+  auto const queue_address = reinterpret_cast<intptr_t>(p_buffer.data());
+  auto const data_address_int = static_cast<std::uint32_t>(data_address);
+  auto const queue_address_int = static_cast<std::uint32_t>(queue_address);
 
   dma::dma1->channel[m_dma - 1].transfer_amount = p_buffer.size();
   dma::dma1->channel[m_dma - 1].peripheral_address = data_address_int;
@@ -183,18 +183,18 @@ std::uint32_t uart::dma_cursor_position()
   return write_position % m_receive_buffer.size();
 }
 
-void uart::driver_configure(const serial::settings& p_settings)
+void uart::driver_configure(serial::settings const& p_settings)
 {
   auto& uart_reg = *to_usart(m_uart);
   configure_baud_rate(uart_reg, m_id, p_settings);
   configure_format(uart_reg, p_settings);
 }
 
-serial::write_t uart::driver_write(std::span<const hal::byte> p_data)
+serial::write_t uart::driver_write(std::span<hal::byte const> p_data)
 {
   auto& uart_reg = *to_usart(m_uart);
 
-  for (const auto& byte : p_data) {
+  for (auto const& byte : p_data) {
     while (not bit_extract<status_reg::transit_empty>(uart_reg.status)) {
       continue;
     }

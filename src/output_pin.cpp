@@ -32,7 +32,7 @@ output_pin::output_pin(std::uint8_t p_port,  // NOLINT
   output_pin::driver_configure(p_settings);
 }
 
-void output_pin::driver_configure(const settings& p_settings)
+void output_pin::driver_configure(settings const& p_settings)
 {
   if (!p_settings.open_drain) {
     configure_pin({ .port = m_port, .pin = m_pin }, push_pull_gpio_output);
