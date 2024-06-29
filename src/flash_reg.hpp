@@ -6,21 +6,21 @@
 namespace hal::stm32f1 {
 struct flash_t
 {
-  volatile std::uint32_t acr;
-  volatile std::uint32_t keyr;
-  volatile std::uint32_t optkeyr;
-  volatile std::uint32_t sr;
-  volatile std::uint32_t cr;
-  volatile std::uint32_t ar;
-  volatile std::uint32_t reserved;
-  volatile std::uint32_t obr;
-  volatile std::uint32_t wrpr;
+  std::uint32_t volatile acr;
+  std::uint32_t volatile keyr;
+  std::uint32_t volatile optkeyr;
+  std::uint32_t volatile sr;
+  std::uint32_t volatile cr;
+  std::uint32_t volatile ar;
+  std::uint32_t volatile reserved;
+  std::uint32_t volatile obr;
+  std::uint32_t volatile wrpr;
   std::array<uint32_t, 8> reserved1;
-  volatile std::uint32_t keyr2;
+  std::uint32_t volatile keyr2;
   uint32_t reserved2;
-  volatile std::uint32_t sr2;
-  volatile std::uint32_t cr2;
-  volatile std::uint32_t ar2;
+  std::uint32_t volatile sr2;
+  std::uint32_t volatile cr2;
+  std::uint32_t volatile ar2;
 };
 
 /// Pointer to the flash control register

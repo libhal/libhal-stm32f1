@@ -48,7 +48,7 @@ input_pin::input_pin(std::uint8_t p_port,  // NOLINT
   }
 }
 
-void input_pin::driver_configure(const settings& p_settings)
+void input_pin::driver_configure(settings const& p_settings)
 {
   if (p_settings.resistor == pin_resistor::pull_up) {
     configure_pin({ .port = m_port, .pin = m_pin }, input_pull_up);

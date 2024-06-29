@@ -37,7 +37,7 @@ bit_mask mask(std::uint8_t p_pin)
 
 /// Returns the configuration control register for the specific pin.
 /// Pins 0 - 7 are in CRL and Pins 8 - 15 are in CRH.
-volatile uint32_t& config_register(const pin_select_t& p_pin_select)
+uint32_t volatile& config_register(pin_select_t const& p_pin_select)
 {
   if (p_pin_select.pin <= 7) {
     return gpio(p_pin_select.port).crl;
