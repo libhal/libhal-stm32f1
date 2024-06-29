@@ -23,7 +23,7 @@
 using namespace hal::literals;
 using namespace std::literals;
 
-volatile int poll_counter = 0;
+int volatile poll_counter = 0;
 
 void application()
 {

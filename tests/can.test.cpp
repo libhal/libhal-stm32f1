@@ -5,7 +5,7 @@
 
 namespace hal::stm32f1 {
 namespace {
-volatile bool skip = true;
+bool volatile skip = true;
 }
 void can_test()
 {

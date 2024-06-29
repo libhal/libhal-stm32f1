@@ -65,17 +65,17 @@ static constexpr auto enable = hal::bit_mask::from<0>();
 
 struct dma_channel_t
 {
-  volatile std::uint32_t configuration;
-  volatile std::uint32_t transfer_amount;
-  volatile std::uint32_t peripheral_address;
-  volatile std::uint32_t memory_address;
-  volatile std::uint32_t reserved;
+  std::uint32_t volatile configuration;
+  std::uint32_t volatile transfer_amount;
+  std::uint32_t volatile peripheral_address;
+  std::uint32_t volatile memory_address;
+  std::uint32_t volatile reserved;
 };
 
 struct dma_t
 {
-  volatile std::uint32_t interrupt_status;
-  volatile std::uint32_t interrupt_flag_clear;
+  std::uint32_t volatile interrupt_status;
+  std::uint32_t volatile interrupt_flag_clear;
   std::array<dma_channel_t, 7> channel;
 };
 

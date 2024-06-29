@@ -21,7 +21,7 @@ public:
    */
   uart(hal::port_param auto p_port,
        hal::buffer_param auto p_buffer,
-       const serial::settings& p_settings = {})
+       serial::settings const& p_settings = {})
     : uart(p_port(), hal::create_unique_static_buffer(p_buffer), p_settings)
   {
     static_assert(p_buffer() <= max_dma_length,
@@ -42,15 +42,15 @@ public:
   uart(hal::runtime,
        std::uint8_t p_port,
        std::span<hal::byte> p_buffer,
-       const serial::settings& p_settings = {});
+       serial::settings const& p_settings = {});
 
 private:
   uart(std::uint8_t p_port,
        std::span<hal::byte> p_receive_buffer,
-       const serial::settings& p_settings);
+       serial::settings const& p_settings);
 
-  void driver_configure(const settings& p_settings) override;
-  write_t driver_write(std::span<const hal::byte> p_data) override;
+  void driver_configure(settings const& p_settings) override;
+  write_t driver_write(std::span<hal::byte const> p_data) override;
   read_t driver_read(std::span<hal::byte> p_data) override;
   void driver_flush() override;
 

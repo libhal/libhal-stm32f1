@@ -14,7 +14,7 @@
 
 #include <libhal-stm32f1/output_pin.hpp>
 
-volatile bool run = false;
+bool volatile run = false;
 
 int main()
 {

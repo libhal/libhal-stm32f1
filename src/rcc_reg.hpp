@@ -21,18 +21,18 @@
 namespace hal::stm32f1 {
 struct reset_and_clock_control_t
 {
-  volatile std::uint32_t cr;
-  volatile std::uint32_t cfgr;
-  volatile std::uint32_t cir;
-  volatile std::uint32_t apb2rstr;
-  volatile std::uint32_t apb1rstr;
-  volatile std::uint32_t ahbenr;
-  volatile std::uint32_t apb2enr;
-  volatile std::uint32_t apb1enr;
-  volatile std::uint32_t bdcr;
-  volatile std::uint32_t csr;
-  volatile std::uint32_t ahbrstr;
-  volatile std::uint32_t cfgr2;
+  std::uint32_t volatile cr;
+  std::uint32_t volatile cfgr;
+  std::uint32_t volatile cir;
+  std::uint32_t volatile apb2rstr;
+  std::uint32_t volatile apb1rstr;
+  std::uint32_t volatile ahbenr;
+  std::uint32_t volatile apb2enr;
+  std::uint32_t volatile apb1enr;
+  std::uint32_t volatile bdcr;
+  std::uint32_t volatile csr;
+  std::uint32_t volatile ahbrstr;
+  std::uint32_t volatile cfgr2;
 };
 
 /**
