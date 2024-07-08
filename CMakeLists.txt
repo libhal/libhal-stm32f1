@@ -38,12 +38,14 @@ libhal_test_and_make_library(
   PACKAGES
   libhal
   libhal-util
+  libhal-soft
   libhal-armcortex
   scope-lite
 
   LINK_LIBRARIES
   libhal::libhal
   libhal::util
+  libhal::soft
   libhal::armcortex
   nonstd::scope-lite
 )

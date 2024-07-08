@@ -47,6 +47,7 @@ class libhal_stm32f1_conan(ConanFile):
             self, override_libhal_util_version="5.0.1")
         self.requires("libhal-armcortex/[^5.0.1]", transitive_headers=True)
         self.requires("scope-lite/0.2.0")
+        self.requires("libhal-soft/[^5.1.0]")
 
     def add_linker_scripts_to_link_flags(self):
         linker_script_name = list(str(self.options.platform))
