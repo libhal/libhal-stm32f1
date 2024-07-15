@@ -8,24 +8,24 @@ namespace hal::stm32f1 {
 
 struct can_tx_mailbox_t
 {
-  std::uint32_t TIR;
-  std::uint32_t TDTR;
-  std::uint32_t TDLR;
-  std::uint32_t TDHR;
+  std::uint32_t volatile TIR;
+  std::uint32_t volatile TDTR;
+  std::uint32_t volatile TDLR;
+  std::uint32_t volatile TDHR;
 };
 
 struct can_fifo_mailbox_t
 {
-  std::uint32_t RIR;
-  std::uint32_t RDTR;
-  std::uint32_t RDLR;
-  std::uint32_t RDHR;
+  std::uint32_t volatile RIR;
+  std::uint32_t volatile RDTR;
+  std::uint32_t volatile RDLR;
+  std::uint32_t volatile RDHR;
 };
 
 struct can_filter_register_t
 {
-  std::uint32_t FR1;
-  std::uint32_t FR2;
+  std::uint32_t volatile FR1;
+  std::uint32_t volatile FR2;
 };
 
 /**
@@ -34,27 +34,27 @@ struct can_filter_register_t
 
 struct can_reg_t
 {
-  std::uint32_t MCR;
-  std::uint32_t MSR;
-  std::uint32_t TSR;
-  std::uint32_t RF0R;
-  std::uint32_t RF1R;
-  std::uint32_t IER;
-  std::uint32_t ESR;
-  std::uint32_t BTR;
+  std::uint32_t volatile MCR;
+  std::uint32_t volatile MSR;
+  std::uint32_t volatile TSR;
+  std::uint32_t volatile RF0R;
+  std::uint32_t volatile RF1R;
+  std::uint32_t volatile IER;
+  std::uint32_t volatile ESR;
+  std::uint32_t volatile BTR;
   std::uint32_t reserved0[88];
   can_tx_mailbox_t transmit_mailbox[3];
   can_fifo_mailbox_t fifo_mailbox[2];
   std::uint32_t reserved1[12];
-  std::uint32_t FMR;
-  std::uint32_t FM1R;
-  std::uint32_t reserved2;
-  std::uint32_t FS1R;
-  std::uint32_t reserved3;
-  std::uint32_t FFA1R;
-  std::uint32_t reserved4;
-  std::uint32_t FA1R;
-  std::uint32_t reserved5[8];
+  std::uint32_t volatile FMR;
+  std::uint32_t volatile FM1R;
+  std::uint32_t volatile reserved2;
+  std::uint32_t volatile FS1R;
+  std::uint32_t volatile reserved3;
+  std::uint32_t volatile FFA1R;
+  std::uint32_t volatile reserved4;
+  std::uint32_t volatile FA1R;
+  std::uint32_t volatile reserved5[8];
   // Limited to only 14 on connectivity line devices
   can_filter_register_t sFilterRegister[28];
 };

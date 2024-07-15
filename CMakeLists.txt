@@ -39,9 +39,11 @@ libhal_test_and_make_library(
   libhal
   libhal-util
   libhal-armcortex
+  scope-lite
 
   LINK_LIBRARIES
   libhal::libhal
   libhal::util
   libhal::armcortex
+  nonstd::scope-lite
 )
