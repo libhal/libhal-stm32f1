@@ -10,6 +10,7 @@
 #include <libhal-util/enum.hpp>
 #include <libhal-util/static_callable.hpp>
 #include <libhal/error.hpp>
+#include <nonstd/scope.hpp>
 
 #include "can_reg.hpp"
 #include "libhal-stm32f1/clock.hpp"
@@ -235,9 +236,18 @@ can_data_registers_t convert_message_to_stm_can(
   return registers;
 }
 
+bool is_bus_off()
+{
+  // True = Bus is in sleep mode
+  // False = Bus has left sleep mode.
+  return bit_extract<master_status::sleep_acknowledge>(can1_reg->MCR);
+}
+
+}  // namespace
+
 can::message_t read_receive_mailbox()
 {
-  can::message_t message;
+  can::message_t message{ .id = 0 };
 
   uint32_t fifo0_status = can1_reg->RF0R;
   uint32_t fifo1_status = can1_reg->RF1R;
@@ -270,6 +280,7 @@ can::message_t read_receive_mailbox()
   } else {
     message.id = bit_extract<mailbox_identifier::standard_identifier>(id);
   }
+
   auto low_read_data = can1_reg->fifo_mailbox[value(fifo_select)].RDLR;
   auto high_read_data = can1_reg->fifo_mailbox[value(fifo_select)].RDHR;
 
@@ -294,16 +305,6 @@ can::message_t read_receive_mailbox()
 
   return message;
 }
-
-bool is_bus_off()
-{
-  // True = Bus is in sleep mode
-  // False = Bus has left sleep mode.
-  return bit_extract<master_status::sleep_acknowledge>(can1_reg->MCR);
-}
-
-}  // namespace
-
 can::can(can::settings const& p_settings, can_pins p_pins)
 {
   power_on(peripheral::can1);
@@ -339,14 +340,13 @@ can::can(can::settings const& p_settings, can_pins p_pins)
 void can::enable_self_test(bool p_enable)
 {
   enter_initialization();
+  nonstd::scope_exit on_exit(&exit_initialization);
 
   if (p_enable) {
     bit_modify(can1_reg->BTR).set<bus_timing::loop_back_mode>();
   } else {
     bit_modify(can1_reg->BTR).clear<bus_timing::loop_back_mode>();
   }
-
-  exit_initialization();
 }
 
 can::~can()
@@ -358,11 +358,10 @@ can::~can()
 void can::driver_configure(can::settings const& p_settings)
 {
   enter_initialization();
+  nonstd::scope_exit on_exit(&exit_initialization);
 
   configure_baud_rate(this, p_settings);
   enable_acceptance_filter();
-
-  exit_initialization();
 }
 
 void can::driver_bus_on()
@@ -418,7 +417,14 @@ hal::callback<can::handler> can_receive_handler{};
 void handler_interrupt()
 {
   auto const message = read_receive_mailbox();
-  can_receive_handler(message);
+  // Why is this here? Because there was an stm32f103c8 chip that may have a
+  // defect or was damaged in testing. That device was then able to set its
+  // length to 9. The actual data in the data registers were garbage data. Even
+  // if the device is damaged, its best to throw out those damaged frames then
+  // attempt to pass them to a handler that may not able to manage them.
+  if (message.length <= 8) {
+    can_receive_handler(message);
+  }
 }
 
 void can::driver_on_receive(hal::callback<handler> p_handler)
